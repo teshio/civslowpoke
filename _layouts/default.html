@@ -37,7 +37,7 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
 
   $scope.getData = function(){
     $scope.data = [];
-    $http.get('http://civslowpoke.azurewebsites.net/api/values')
+    $http.get('https://civslowpoke.azurewebsites.net/api/values')
     .then(function(response){
         $scope.data = response.data;
 
