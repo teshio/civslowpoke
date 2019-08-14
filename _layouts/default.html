@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="{{ page.lang | default: site.lang | default: " en " }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> {%- seo -%}
+    <!-- Chrome, Firefox OS and Opera -->
+    <meta name="theme-color" content="#5a9296">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#5a9296">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#5a9296">
+
+
+    <link rel="stylesheet" href="/assets/main.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> {%- feed_meta -%} {%- if jekyll.environment == 'production' and site.google_analytics -%} {%- include google-analytics.html -%} {%- endif -%}
+    <title>{{ site.title }}</title>
+    {% seo %}
+</head>
+
+<body>
+    {%- assign default_paths = site.pages | map: "path" -%} {%- assign page_paths = site.header_pages | default: default_paths -%}
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container">
+                <a href="/" class="navbar-brand mb-0 h1">
+                <!--  <img src="/assets/leaf.jpg" height=50/> -->
+                    <span style="color:#5a9296"><i class="fa fa-clock fa-lg animated jackInTheBox"></i></span>
+                    <span class="ml-2">
+                      <span style="color:#9FC2BF">Civ</span><span style="color:#5a9296">Slow</span><span style="color:#9FC2BF">Poke</span>
+                    </span>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+
+                      {%- for path in page_paths -%}
+                      {%- assign my_page = site.pages | where: "path", path | first -%}
+                      {%- if my_page.title == "Treatments" -%}
+                        <li class="nav-item dropdown {% if page.url contains '/treatments/'  %}active{% endif %}">
+                            <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="{{my_page.icon}}"></i>&nbsp;&nbsp; {{ my_page.title | escape }}
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                {% assign orderedTreatments = site.treatments | sort:"order"%}
+                                {% for t in orderedTreatments %}
+                                <a class="dropdown-item {% if page.url == t.url %}active{% endif %}" href="{{t.url}}">
+                                 <span class="badge badge-dark text-right">{{ t.titletag }}</span>  {{t.title}}
+                                </a>
+                                {% endfor %}
+                            </div>
+                          </li>
+                          {%- else -%}
+
+                        <li class="nav-item {% if page.url == my_page.url %}active{% endif %}">
+                            <a href="{{ my_page.url | relative_url }}" class="nav-link">
+                                <i class="{{my_page.icon}}"></i>&nbsp;&nbsp;{{ my_page.title | escape }}
+                            </a>
+                        </li> {%- endif -%} {%- endfor -%}
+
+                    </ul>
+                </div>
+        </nav>
+        </div>
+
+    </header>
+
+
+
+    <div class="container shadow  pt-5 mt-4 ">
+
+        {{content}}
+
+        <div class="mt-4 mb-4">
+            <hr />
+        </div>
+        <footer class="mt-2">
+
+            <div class="row pt-2 pb-2">
+
+                <div class="col-md-6 text-center mt-3">
+
+                    <br />
+                </div>
+
+                <div class="col-md-6 text-center text-lg-right text-muted mt-3">
+                    {{site.description}}
+                </div>
+
+            </div>
+            <div class="row pb-3 justify-content-center">
+
+            </div>
+            <div class="row pt-1 pb-5 text-center">
+                <div class="col-12">
+                    <small>Copyright &copy; {{ 'now' | date: "%Y" }} - {{site.title}} </small>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

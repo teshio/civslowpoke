@@ -1,0 +1,38 @@
+---
+---
+// Your variable overrides
+//$body-bg: #ddd;
+//$body-color: #000;
+
+$body-bg: transparent;
+$dark: #9FC2BF;
+$primary:       #5a9296;
+$secondary:      #9FC2BF;
+$headings-color:              $primary;
+
+@media (min-width: 1000px) and (max-width: 1200px) {
+   .collapse {
+       display: none !important;
+   }
+}
+
+@import 'bootstrap';
+@import 'timeline';
+
+
+html {
+  background: url(/assets/back.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+nav .container {
+  background-color: transparent;
+
+}
+
+.container{
+  background-color: white;
+}
