@@ -5,5 +5,24 @@
 layout: default
 ---
 
+<div class="container" ng-app="myApp" ng-controller="myCtrl">
 
-test
+  <button class="btn btn-primary" ng-click="getData()">Refresh</button>
+
+  <table class="table">
+  <thead>
+    <th>Game Name</th>
+    <th>Player</th>
+    <th>Turn #</th>
+    <th>Occurred At</th>
+  </thead>
+  <tr class="panel" ng-repeat="x in data | orderBy: 'created' ">
+      <td>[[x.gameName]]</td>
+      <td>[[x.playerName]]</td>
+      <td>[[x.turn]]</td>
+      <td>[[x.prettyDate]]</td>
+  </tr>
+</table>
+
+<p class="text-muted text-right"><small>last updated: [[lastUpdated]]</small></p>
+</div>
