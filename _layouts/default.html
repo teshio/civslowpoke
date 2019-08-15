@@ -34,11 +34,12 @@
 
 app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
   $scope.help = 'boo';
-
+  $scope.loading = true;
   $scope.getData = function(){
     $scope.data = [];
+    $scope.loading = true;
     $http.get('https://civslowpoke.azurewebsites.net/api/values')
-    .then(function(response){
+      .then(function(response){
         $scope.data = response.data;
 
         for(var i = 0; i < $scope.data.length; i++){
@@ -46,6 +47,10 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
         }
 
         $scope.lastUpdated = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
+        $timeout(function(){
+          $scope.loading = false;
+
+        }, 2000);
     });
   };
 
@@ -71,7 +76,7 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <div class="container">
-                <a href="/" class="navbar-brand mb-0 h1">
+                <a href="{{site.baseurl}}/index" class="navbar-brand mb-0 h1">
                 <!--  <img src="/assets/leaf.jpg" height=50/> -->
                     <span style="color:#5a9296"><i class="fa fa-clock fa-lg animated jackInTheBox"></i></span>
                     <span class="ml-2">
