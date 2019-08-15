@@ -47,17 +47,14 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
         }
 
         $scope.lastUpdated = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
-        $timeout(function(){
-          $scope.loading = false;
-
-        }, 2000);
+        $scope.loading = false;
     });
   };
 
 
   $scope.getPrettyDate = function(d){
     var dt = moment.utc(d);
-    return dt.format("dddd, MMMM Do YYYY, h:mm:ss a");
+    return dt.format("HH:mm Do MMMM YYYY");
   }
 
   $scope.getData();

@@ -11,14 +11,18 @@ layout: default
 
   </div>
   <div ng-hide="loading">
-    <button class="btn btn-primary" ng-click="getData()">Refresh</button><br>
+    <button class="btn btn-primary" ng-click="getData()">Refresh</button>
 
-    <table class="table">
+    <br><br>
+
+    <table class="table table-striped">
       <thead>
+        <tr>
         <th>Game Name</th>
         <th>Player</th>
         <th>Turn #</th>
         <th>Occurred At</th>
+        </tr>
       </thead>
       <tr class="panel" ng-repeat="x in data | orderBy: 'created' ">
           <td>[[x.gameName]]</td>
