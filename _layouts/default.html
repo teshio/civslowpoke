@@ -43,7 +43,16 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
         $scope.data = response.data;
 
         for(var i = 0; i < $scope.data.length; i++){
-          $scope.data[i].prettyDate = $scope.getPrettyDate($scope.data[i].created);
+          var created = $scope.data[i].created;
+          $scope.data[i].prettyDate = $scope.getPrettyDate(created);
+
+          if(i > 0){
+            var sinceLast =  moment.duration(moment.utc(created).diff($scope.data[i-1].created));
+            var minsSince = Math.round(sinceLast.as('minutes'));
+            $scope.data[i-1].timeTaken = minsSince;
+          }else{
+            $scope.data[0].timeTaken = -1;
+          }
         }
 
         $scope.lastUpdated = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")

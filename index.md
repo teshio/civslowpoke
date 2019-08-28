@@ -22,13 +22,15 @@ layout: default
         <th>Player</th>
         <th>Turn #</th>
         <th>Occurred At</th>
+        <th>Time Taken (mins)</th>
         </tr>
       </thead>
-      <tr class="panel" ng-repeat="x in data | orderBy: 'created' ">
+      <tr class="panel" ng-repeat="x in data | orderBy: '-created' ">
           <td>[[x.gameName]]</td>
           <td>[[x.playerName]]</td>
           <td>[[x.turn]]</td>
           <td>[[x.prettyDate]]</td>
+          <td>[[x.timeTaken]]</td>
       </tr>
     </table>
 
