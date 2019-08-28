@@ -17,8 +17,8 @@ layout: default
 
       </div>
     </div>
-    <div class="row mb-3">
-      <div class="col-4" ng-repeat="(key, value) in data | groupBy: 'playerName' ">
+    <div class="row ">
+      <div class="col-md-4 mb-3" ng-repeat="(key, value) in data | groupBy: 'playerName' ">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">[[key]]</h5>
