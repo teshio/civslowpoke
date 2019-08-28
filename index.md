@@ -18,12 +18,13 @@ layout: default
       </div>
     </div>
     <div class="row ">
-      <div class="col-md-4 mb-3" ng-repeat="(key, value) in data | groupBy: 'playerName' ">
+      <div class="col-md-4 mb-3" ng-repeat="group in data | groupBy: 'playerName' | toArray:true | orderBy:calculateAverage ">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">[[key]]</h5>
+            <h5 class="card-title">[[group.$key]] <span title="quickest turn taker award" ng-show="$first"><i class="fas fa-medal"></i></span></h5>
+
             <p class="card-text">
-              Average Turn Time: <span class="badge badge-primary">[[calculateAverage(value)]] mins </span>
+              Average Turn Time: <span class="badge badge-primary">[[calculateAverage(group)]] mins </span>
             </p>
           </div>
         </div>
@@ -50,7 +51,7 @@ layout: default
         </tr>
       </table>
     </div>
-    
+
     <p class="text-muted text-right"><small>last updated: [[lastUpdated]]</small></p>
   </div>
 </div>
