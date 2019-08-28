@@ -32,7 +32,7 @@ layout: default
     </div>
 
     <div class="table-responsive">
-      <table class="table table-striped table-sm">
+      <table class="table table-striped">
         <thead class="">
           <tr>
           <th>Game Name</th>
@@ -40,6 +40,7 @@ layout: default
           <th>Turn #</th>
           <th>Occurred At</th>
           <th>Time Taken (mins)</th>
+          <th></th>
           </tr>
         </thead>
         <tr class="panel" ng-repeat="x in data | orderBy: '-created' ">
@@ -48,6 +49,10 @@ layout: default
             <td>[[x.turn]]</td>
             <td>[[x.prettyDate]]</td>
             <td>[[x.timeTaken]]</td>
+            <td>
+              <span ng-show="x.timeTaken < 5"><i class="fas fa-fighter-jet fa-lg"></i></span>
+              <span ng-show="x.timeTaken > 1000"><i class="fas fa-blind fa-lg"></i></span>
+            </td>
         </tr>
       </table>
     </div>
