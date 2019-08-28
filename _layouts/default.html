@@ -15,7 +15,11 @@
     <link rel="stylesheet" href="{{site.baseurl}}/assets/main.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> {%- feed_meta -%} {%- if jekyll.environment == 'production' and site.google_analytics -%} {%- include google-analytics.html -%} {%- endif -%}
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    {%- feed_meta -%} {%- if jekyll.environment == 'production' and site.google_analytics -%}
+     {%- include google-analytics.html -%}
+     {%- endif -%}
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
@@ -23,11 +27,12 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular.js" integrity="sha256-47AQCzX6dqzjicKe4PabaBJtLnWffl34LU9WJUulNog=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.17/angular-filter.min.js"></script>
 <script>
 
   //var app = angular.module('myApp', []);
 
-  var app = angular.module('myApp', [], function($interpolateProvider) {
+  var app = angular.module('myApp', ['angular.filter'], function($interpolateProvider) {
   $interpolateProvider.startSymbol('[[');
   $interpolateProvider.endSymbol(']]');
 });
@@ -35,6 +40,31 @@
 app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
   $scope.help = 'boo';
   $scope.loading = true;
+
+  $scope.calculateAverage = function(data){
+    var sum = 0;
+    for(var i = 0; i < data.length; i++){
+        if(data[i].timeTaken > 0){
+          sum += parseInt((data[i].timeTaken), 10); //don't forget to add the base
+        }
+    }
+
+    var avg = sum/data.length;
+
+    return Math.round(avg);
+  };
+
+  $scope.createStats = function(rawData){
+    $scope.stats = [];
+
+    var stats = [];
+
+
+
+
+    $scope.stats = stats;
+  }
+
   $scope.getData = function(){
     $scope.data = [];
     $scope.loading = true;
@@ -42,21 +72,28 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
       .then(function(response){
         $scope.data = response.data;
 
-        for(var i = 0; i < $scope.data.length; i++){
+        for(var i = 0; i < $scope.data.length; i++)
+        {
           var created = $scope.data[i].created;
           $scope.data[i].prettyDate = $scope.getPrettyDate(created);
 
-          if(i > 0){
+          if (i > 0)
+          {
             var sinceLast =  moment.duration(moment.utc(created).diff($scope.data[i-1].created));
             var minsSince = Math.round(sinceLast.as('minutes'));
             $scope.data[i-1].timeTaken = minsSince;
-          }else{
+          }
+          else
+          {
             $scope.data[0].timeTaken = -1;
           }
         }
 
+        $scope.createStats($scope.data);
+
         $scope.lastUpdated = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
         $scope.loading = false;
+
     });
   };
 

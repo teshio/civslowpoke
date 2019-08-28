@@ -11,9 +11,24 @@ layout: default
 
   </div>
   <div ng-hide="loading">
-    <button class="btn btn-primary" ng-click="getData()">Refresh</button>
+    <div class="row mb-3">
+      <div class="col-12">
+        <button class="btn btn-block btn-primary" ng-click="getData()">Refresh</button>
 
-    <br><br>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-4" ng-repeat="(key, value) in data | groupBy: 'playerName' ">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">[[key]]</h5>
+            <p class="card-text">
+              Average Turn Time: <span class="badge badge-primary">[[calculateAverage(value)]] mins </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <table class="table table-striped">
       <thead>
