@@ -30,25 +30,27 @@ layout: default
       </div>
     </div>
 
-    <table class="table table-striped">
-      <thead>
-        <tr>
-        <th>Game Name</th>
-        <th>Player</th>
-        <th>Turn #</th>
-        <th>Occurred At</th>
-        <th>Time Taken (mins)</th>
+    <div class="table-responsive">
+      <table class="table table-striped table-sm">
+        <thead class="">
+          <tr>
+          <th>Game Name</th>
+          <th>Player</th>
+          <th>Turn #</th>
+          <th>Occurred At</th>
+          <th>Time Taken (mins)</th>
+          </tr>
+        </thead>
+        <tr class="panel" ng-repeat="x in data | orderBy: '-created' ">
+            <td>[[x.gameName]]</td>
+            <td>[[x.playerName]]</td>
+            <td>[[x.turn]]</td>
+            <td>[[x.prettyDate]]</td>
+            <td>[[x.timeTaken]]</td>
         </tr>
-      </thead>
-      <tr class="panel" ng-repeat="x in data | orderBy: '-created' ">
-          <td>[[x.gameName]]</td>
-          <td>[[x.playerName]]</td>
-          <td>[[x.turn]]</td>
-          <td>[[x.prettyDate]]</td>
-          <td>[[x.timeTaken]]</td>
-      </tr>
-    </table>
-
+      </table>
+    </div>
+    
     <p class="text-muted text-right"><small>last updated: [[lastUpdated]]</small></p>
   </div>
 </div>
