@@ -65,17 +65,39 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
     $scope.stats = stats;
   }
 
+  $scope.selectedGameNameChanged = function(){
+    var newData = [];
+    for(var i = 0; i < $scope.allData.length; i++){
+      var d = $scope.allData[i];
+      if(d.gameName === $scope.selectedGameName || $scope.selectedGameName === ""){
+        newData.push(d);
+      }
+    }
+
+    $scope.data = newData;
+    $scope.createStats($scope.data);
+  };
+
   $scope.getData = function(){
     $scope.data = [];
+    $scope.allData = [];
     $scope.loading = true;
     $http.get('https://civslowpoke.azurewebsites.net/api/values')
       .then(function(response){
         $scope.data = response.data;
 
+        var gameNames = [];
+
         for(var i = 0; i < $scope.data.length; i++)
         {
           var created = $scope.data[i].created;
           $scope.data[i].prettyDate = $scope.getPrettyDate(created);
+
+          var gameName = $scope.data[i].gameName;
+
+          if(gameNames.indexOf(gameName) == -1){
+            gameNames.push(gameName);
+          }
 
           if (i > 0)
           {
@@ -88,6 +110,9 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
             $scope.data[0].timeTaken = -1;
           }
         }
+
+        $scope.gameNames = gameNames;
+        $scope.allData = $scope.data;
 
         $scope.createStats($scope.data);
 

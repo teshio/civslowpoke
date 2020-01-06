@@ -31,6 +31,17 @@ layout: default
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">          
+          <select class="form-control" ng-model="selectedGameName" ng-change="selectedGameNameChanged()">
+            <option value="">select a game</option>
+            <option ng-repeat="n in gameNames">[[n]]</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div class="table-responsive">
       <table class="table table-striped">
         <thead class="">
