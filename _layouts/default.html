@@ -29,99 +29,77 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular.js" integrity="sha256-47AQCzX6dqzjicKe4PabaBJtLnWffl34LU9WJUulNog=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.17/angular-filter.min.js"></script>
 <script>
-
-  //var app = angular.module('myApp', []);
-
   var app = angular.module('myApp', ['angular.filter'], function($interpolateProvider) {
   $interpolateProvider.startSymbol('[[');
   $interpolateProvider.endSymbol(']]');
 });
 
 app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
-  $scope.help = 'boo';
   $scope.loading = true;
 
-  $scope.calculateAverage = function(data){
-    var sum = 0;
-    for(var i = 0; i < data.length; i++){
-        if(data[i].timeTaken > 0){
-          sum += parseInt((data[i].timeTaken), 10); //don't forget to add the base
-        }
-    }
-
-    var avg = sum/data.length;
-
-    return Math.round(avg);
+  $scope.selectedGameNameChanged = function(){
+    $scope.processData();
   };
 
-  $scope.createStats = function(rawData){
-    $scope.stats = [];
+  $scope.processData = function(){
+    var allData = $scope.allData;
+    $scope.gameNames = allData.gameNames;
 
-    var stats = [];
-
-
-
-
-    $scope.stats = stats;
-  }
-
-  $scope.selectedGameNameChanged = function(){
-    var newData = [];
-    for(var i = 0; i < $scope.allData.length; i++){
-      var d = $scope.allData[i];
-      if(d.gameName === $scope.selectedGameName || $scope.selectedGameName === ""){
-        newData.push(d);
-      }
+    if($scope.selectedGameName == null){
+      $scope.selectedGameName = $scope.gameNames[$scope.gameNames.length - 1];
     }
 
-    $scope.data = newData;
-    $scope.createStats($scope.data);
+    var gameData = allData.games[$scope.selectedGameName];
+    var turns = gameData.turns;
+    var displayData = [];
+
+    for(var i = 0; i < turns.length; i++){
+      var turnTimeSecond = turns[i].turnTimeSecond;
+      var d = {
+        playerName: turns[i].player,
+        created: turns[i].eventDateTime,
+        turn: turns[i].turn,
+        gameName: gameData.gameName,
+        prettyDate:  $scope.getPrettyDate(turns[i].eventDateTime),
+        timeTaken: turnTimeSecond === -1 ? null : Math.round(turnTimeSecond / 60, 0)
+      };
+      displayData.push(d);
+    }
+
+    var playerStats = [];
+    for(var i = 0; i < gameData.players.length; i++){
+      var p = gameData.players[i];
+      var s = {
+        playerName: p.name,
+        turnAvg: Math.round(p.averageTurnTimeSeconds/60.0,0),
+        turnMin: Math.round(p.minTurnTimeSeconds/60.0,0),
+        turnMax: Math.round(p.maxTurnTimeSeconds/60.0,0),
+        turnStd: Math.round(p.standardDeviationTurnTime/60.0,0),
+        isTurn: p.isTurn
+      };
+      playerStats.push(s);
+    }
+
+    $scope.playerStats = playerStats;
+    $scope.data = displayData;
+    $scope.lastUpdated = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
+    $scope.loading = false;
+  };
+
+  $scope.turnClass = function(stat){
+    return stat.isTurn ? 'table-warning' : '';
   };
 
   $scope.getData = function(){
     $scope.data = [];
     $scope.allData = [];
     $scope.loading = true;
-    $http.get('https://civslowpoke.azurewebsites.net/api/values')
+    $http.get('https://civslowpoke.azurewebsites.net/api/values/all')
       .then(function(response){
-        $scope.data = response.data;
-
-        var gameNames = [];
-
-        for(var i = 0; i < $scope.data.length; i++)
-        {
-          var created = $scope.data[i].created;
-          $scope.data[i].prettyDate = $scope.getPrettyDate(created);
-
-          var gameName = $scope.data[i].gameName;
-
-          if(gameNames.indexOf(gameName) == -1){
-            gameNames.push(gameName);
-          }
-
-          if (i > 0)
-          {
-            var sinceLast =  moment.duration(moment.utc(created).diff($scope.data[i-1].created));
-            var minsSince = Math.round(sinceLast.as('minutes'));
-            $scope.data[i-1].timeTaken = minsSince;
-          }
-          else
-          {
-            $scope.data[0].timeTaken = -1;
-          }
-        }
-
-        $scope.gameNames = gameNames;
-        $scope.allData = $scope.data;
-
-        $scope.createStats($scope.data);
-
-        $scope.lastUpdated = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
-        $scope.loading = false;
-
+        $scope.allData = response.data;
+        $scope.processData();
     });
   };
-
 
   $scope.getPrettyDate = function(d){
     var dt = moment.utc(d);
