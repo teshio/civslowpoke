@@ -60,7 +60,7 @@ layout: default
           <tr>
             <th>Player</th>
             <th>Turn #</th>
-            <th>Occurred At</th>
+            <th>Turn Available At</th>
             <th>Time Taken (mins)</th>
           </tr>
         </thead>
