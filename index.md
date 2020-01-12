@@ -52,13 +52,12 @@ layout: default
       </table>
     </div>
 
-    <h5>Turn History</h5>
+    <h5>Turn History - [[selectedGameName]]</h5>
 
     <div class="table-responsive">
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>Game Name</th>
             <th>Player</th>
             <th>Turn #</th>
             <th>Occurred At</th>
@@ -67,11 +66,13 @@ layout: default
           </tr>
         </thead>
         <tr class="panel" ng-repeat="x in data | orderBy: '-created' ">
-            <td>[[x.gameName]]</td>
             <td>[[x.playerName]]</td>
             <td>[[x.turn]]</td>
             <td>[[x.prettyDate]]</td>
-            <td>[[x.timeTaken]]</td>
+            <td ng-class="{'pulsate': $first, 'text-danger': $first }" >
+            [[x.timeTaken]]
+            <i class="fas fa-cog fa-spin" ng-show="$first"></i>
+            </td>
             <td>
               <span ng-show="x.timeTaken < 5 && x.timeTaken > 0"><i class="fas fa-fighter-jet fa-lg"></i></span>
               <span ng-show="x.timeTaken > 1000"><i class="fas fa-blind fa-lg"></i></span>
