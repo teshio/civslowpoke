@@ -52,6 +52,12 @@ layout: default
       </table>
     </div>
 
+    <h5>Run Chart</h5>
+
+     <nvd3 options="chartOptions" data="chartData" api="api"></nvd3>
+
+
+
     <h5>Turn History - [[selectedGameName]]</h5>
 
     <div class="table-responsive">

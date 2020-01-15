@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css"/>
 
     {%- feed_meta -%} {%- if jekyll.environment == 'production' and site.google_analytics -%}
      {%- include google-analytics.html -%}
@@ -28,8 +29,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular.js" integrity="sha256-47AQCzX6dqzjicKe4PabaBJtLnWffl34LU9WJUulNog=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.17/angular-filter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-nvd3/1.0.9/angular-nvd3.min.js"></script>
 <script>
-  var app = angular.module('myApp', ['angular.filter'], function($interpolateProvider) {
+  var app = angular.module('myApp', ['angular.filter','nvd3'], function($interpolateProvider) {
   $interpolateProvider.startSymbol('[[');
   $interpolateProvider.endSymbol(']]');
 });
@@ -82,9 +86,68 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
 
     $scope.playerStats = playerStats;
     $scope.data = displayData;
+    $scope.setChartData(displayData);
     $scope.lastUpdated = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
     $scope.loading = false;
   };
+
+  $scope.setChartData = function(data){
+    $scope.chartOptions = {
+      chart: {
+          type: 'cumulativeLineChart',
+          height: 450,
+          margin : {
+              top: 20,
+              right: 20,
+              bottom: 60,
+              left: 20
+          },
+          x: function(d){ return d[0]; },
+          y: function(d){ return d[1]; },
+          //average: function(d) { return d.mean/100; },
+
+          color: d3.scale.category10().range(),
+          duration: 300,
+          useInteractiveGuideline: true,
+          clipVoronoi: false,
+
+          xAxis: {
+              axisLabel: 'Turn Time',
+              tickFormat: function(d) {
+                  return d3.time.format('%d/%m/%y')(new Date(d))
+              },
+              showMaxMin: false,
+              staggerLabels: true
+          },
+
+          yAxis: {
+              axisLabel: 'Turn #',
+              tickFormat: function(d){
+                  //return d3.format('1')(d);
+                  return d;
+              },
+              axisLabelDistance: 40
+          }
+      }
+    };
+
+    var chartData = [];
+
+    if(data){
+      var items = [];
+      for(var i = 0 ; i < data.length; i++){
+        var d = data[i];
+        var item = [moment.utc(d.created).valueOf(), d.turn];
+        items.push(item);
+      }
+
+      chartData.push({key: 'turns burn', values: items});
+
+      $scope.chartData = chartData;
+      $timeout(function(){$scope.api.refresh();}, 10);
+
+      }
+    };
 
   $scope.turnClass = function(stat){
     return stat.isTurn ? 'table-warning' : '';
@@ -106,7 +169,8 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
     return dt.format("HH:mm Do MMMM YYYY");
   }
 
-  $scope.getData();
+  $scope.setChartData();
+  $scope.getData(null);
 
 });
 
