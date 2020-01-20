@@ -52,6 +52,12 @@ layout: default
       </table>
     </div>
 
+    <h5>Game Stats</h5>
+
+    <p>
+    <i class="fas fa-tachometer-alt animated tada"></i>
+     <strong>[[gameStats.turnsPerDay | number: 2]] turns/day</strong>
+    </p>
     <h5>Run Chart</h5>
 
     <nvd3 options="chartOptions" data="chartData" api="api"></nvd3>

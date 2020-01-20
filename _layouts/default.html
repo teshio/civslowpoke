@@ -83,7 +83,9 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
       };
       playerStats.push(s);
     }
-
+    $scope.gameStats = {
+      turnsPerDay: gameData.turnRate
+    };
     $scope.playerStats = playerStats;
     $scope.data = displayData;
     $scope.setChartData(displayData);
