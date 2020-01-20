@@ -87,6 +87,7 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
     $scope.playerStats = playerStats;
     $scope.data = displayData;
     $scope.setChartData(displayData);
+    $scope.setChartData2(displayData);
     $scope.lastUpdated = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
     $scope.loading = false;
   };
@@ -143,12 +144,88 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
       }
 
       chartData.push({key: 'Turns', values: items, area: true});
-      console.log(chartData);
       $scope.chartData = chartData;
       $timeout(function(){$scope.api.refresh();}, 10);
 
       }
     };
+
+    $scope.setChartData2 = function(data){
+      $scope.chartOptions2 = {
+        chart: {
+            type: 'lineChart',
+            height: 450,
+            margin : {
+                top: 20,
+                right: 20,
+                bottom: 60,
+                left: 70
+            },
+            x: function(d){ return d[0]; },
+            y: function(d){ return d[1]; },
+            average: function(d) {
+              debugger;
+              return d.mean;
+            },
+            color: d3.scale.category10().range(),
+            duration: 300,
+            useInteractiveGuideline: true,
+            clipVoronoi: true,
+
+            xAxis: {
+                axisLabel: 'Turn #',
+                tickFormat: function(d) {
+                    return d;
+                },
+                showMaxMin: true,
+                staggerLabels: false,
+                axisLabelDistance: 10
+            },
+
+            yAxis: {
+                axisLabel: 'Turn Time (mins)',
+                tickFormat: function(d){
+                    return d;
+                },
+                axisLabelDistance: -10
+            }
+        }
+      };
+
+      var chartData = [];
+
+      if(data){
+
+        var gameName = $scope.selectedGameName;
+        var players = $scope.allData.games[gameName].players;
+
+        for(var j = 0; j < players.length; j++){
+          var player = players[j];
+          var items = [];
+
+          for(var i = 0 ; i < data.length; i++){
+            var d = data[i];
+            if(d.playerName == player.name){
+              var item = [d.turn, d.timeTaken];
+              items.push(item);
+            }
+          }
+
+          var avg = 0;
+          for(var k = 0; k < $scope.playerStats.length; k++){
+           if($scope.playerStats[k].playerName == player.name){
+             avg = $scope.playerStats[k].turnAvg;
+           }
+          }
+          chartData.push({key: player.name, values: items, area: false, mean: avg});
+        }
+
+        $scope.chartData2 = chartData;
+        $timeout(function(){$scope.api2.refresh();}, 500);
+        }
+      };
+
+
 
   $scope.turnClass = function(stat){
     return stat.isTurn ? 'table-warning' : '';
@@ -171,6 +248,7 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
   }
 
   $scope.setChartData();
+  $scope.setChartData2();
   $scope.getData(null);
 
 });
