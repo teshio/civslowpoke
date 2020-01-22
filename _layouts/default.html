@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> {%- seo -%}
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {%- seo -%}
     <!-- Chrome, Firefox OS and Opera -->
     <meta name="theme-color" content="#5a9296">
     <!-- Windows Phone -->
@@ -11,16 +13,16 @@
     <!-- iOS Safari -->
     <meta name="apple-mobile-web-app-status-bar-style" content="#5a9296">
 
-
     <link rel="stylesheet" href="{{site.baseurl}}/assets/main.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css"/>
 
-    {%- feed_meta -%} {%- if jekyll.environment == 'production' and site.google_analytics -%}
-     {%- include google-analytics.html -%}
-     {%- endif -%}
+    {%- feed_meta -%}
+    {%- if jekyll.environment == 'production' and site.google_analytics -%}
+      {%- include google-analytics.html -%}
+    {%- endif -%}
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
@@ -32,233 +34,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-nvd3/1.0.9/angular-nvd3.min.js"></script>
-<script>
-  var app = angular.module('myApp', ['angular.filter','nvd3'], function($interpolateProvider) {
-  $interpolateProvider.startSymbol('[[');
-  $interpolateProvider.endSymbol(']]');
-});
-
-app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
-  $scope.loading = true;
-
-  $scope.selectedGameNameChanged = function(){
-    $scope.processData();
-  };
-
-  $scope.processData = function(){
-    var allData = $scope.allData;
-    $scope.gameNames = allData.gameNames;
-
-    if($scope.selectedGameName == null){
-      $scope.selectedGameName = $scope.gameNames[$scope.gameNames.length - 1];
-    }
-
-    var gameData = allData.games[$scope.selectedGameName];
-    var turns = gameData.turns;
-    var displayData = [];
-
-    for(var i = 0; i < turns.length; i++){
-      var turnTimeSecond = turns[i].turnTimeSecond;
-      var d = {
-        playerName: turns[i].player,
-        created: turns[i].eventDateTime,
-        turn: turns[i].turn,
-        gameName: gameData.gameName,
-        prettyDate:  $scope.getPrettyDate(turns[i].eventDateTime),
-        timeTaken: turnTimeSecond === -1 ? null : Math.round(turnTimeSecond / 60, 0)
-      };
-      displayData.push(d);
-    }
-
-    var playerStats = [];
-    for(var i = 0; i < gameData.players.length; i++){
-      var p = gameData.players[i];
-      var s = {
-        playerName: p.name,
-        turnAvg: Math.round(p.averageTurnTimeSeconds/60.0,0),
-        turnMin: Math.round(p.minTurnTimeSeconds/60.0,0),
-        turnMax: Math.round(p.maxTurnTimeSeconds/60.0,0),
-        turnStd: Math.round(p.standardDeviationTurnTime/60.0,0),
-        isTurn: p.isTurn
-      };
-      playerStats.push(s);
-    }
-    $scope.gameStats = {
-      turnsPerDay: gameData.turnRate
-    };
-    $scope.playerStats = playerStats;
-    $scope.data = displayData;
-    $scope.setChartData(displayData);
-    $scope.setChartData2(displayData);
-    $scope.lastUpdated = moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
-    $scope.loading = false;
-  };
-
-  $scope.setChartData = function(data){
-    $scope.chartOptions = {
-      chart: {
-          type: 'lineChart',
-          height: 450,
-          margin : {
-              top: 20,
-              right: 0,
-              bottom: 60,
-              left: 0
-          },
-          x: function(d){ return d[0]; },
-          y: function(d){ return d[1]; },
-          //average: function(d) { return d.mean/100; },
-
-          color: d3.scale.category10().range(),
-          //duration: 300,
-          useInteractiveGuideline: true,
-          clipVoronoi: false,
-
-          xAxis: {
-              axisLabel: 'Turn Time',
-              tickFormat: function(d) {
-                  return d3.time.format('%d/%m/%y')(new Date(d))
-              },
-              showMaxMin: true,
-              staggerLabels: true,
-              axisLabelDistance: 10
-          },
-
-          yAxis: {
-              axisLabel: 'Turn No.',
-              tickFormat: function(d){
-                  //return d3.format('1')(d);
-                  return d;
-              },
-              axisLabelDistance: 0
-          }
-      }
-    };
-
-    var chartData = [];
-
-    if(data){
-      var items = [];
-      for(var i = 0 ; i < data.length; i++){
-        var d = data[i];
-        var item = [moment.utc(d.created).valueOf(), d.turn];
-        items.push(item);
-      }
-
-      chartData.push({key: 'Turns', values: items, area: true});
-      $scope.chartData = chartData;
-      $timeout(function(){$scope.api.refresh();}, 10);
-
-      }
-    };
-
-    $scope.setChartData2 = function(data){
-      $scope.chartOptions2 = {
-        chart: {
-            type: 'lineChart',
-            height: 450,
-            margin : {
-                top: 20,
-                right: 20,
-                bottom: 60,
-                left: 70
-            },
-            x: function(d){ return d[0]; },
-            y: function(d){ return d[1]; },
-            average: function(d) {
-              debugger;
-              return d.mean;
-            },
-            color: d3.scale.category10().range(),
-            duration: 300,
-            useInteractiveGuideline: true,
-            clipVoronoi: true,
-
-            xAxis: {
-                axisLabel: 'Turn #',
-                tickFormat: function(d) {
-                    return d;
-                },
-                showMaxMin: true,
-                staggerLabels: false,
-                axisLabelDistance: 10
-            },
-
-            yAxis: {
-                axisLabel: 'Turn Time (mins)',
-                tickFormat: function(d){
-                    return d;
-                },
-                axisLabelDistance: -10
-            }
-        }
-      };
-
-      var chartData = [];
-
-      if(data){
-
-        var gameName = $scope.selectedGameName;
-        var players = $scope.allData.games[gameName].players;
-
-        for(var j = 0; j < players.length; j++){
-          var player = players[j];
-          var items = [];
-
-          for(var i = 0 ; i < data.length; i++){
-            var d = data[i];
-            if(d.playerName == player.name){
-              var item = [d.turn, d.timeTaken];
-              items.push(item);
-            }
-          }
-
-          var avg = 0;
-          for(var k = 0; k < $scope.playerStats.length; k++){
-           if($scope.playerStats[k].playerName == player.name){
-             avg = $scope.playerStats[k].turnAvg;
-           }
-          }
-          chartData.push({key: player.name, values: items, area: false, mean: avg});
-        }
-
-        $scope.chartData2 = chartData;
-        $timeout(function(){$scope.api2.refresh();}, 500);
-        }
-      };
-
-
-
-  $scope.turnClass = function(stat){
-    return stat.isTurn ? 'table-warning' : '';
-  };
-
-  $scope.getData = function(){
-    $scope.data = [];
-    $scope.allData = [];
-    $scope.loading = true;
-    $http.get('https://civslowpoke.azurewebsites.net/api/values/all')
-      .then(function(response){
-        $scope.allData = response.data;
-        $scope.processData();
-    });
-  };
-
-  $scope.getPrettyDate = function(d){
-    var dt = moment.utc(d);
-    return dt.format("HH:mm Do MMMM YYYY");
-  }
-
-  $scope.setChartData();
-  $scope.setChartData2();
-  $scope.getData(null);
-
-});
-
-  </script>
-
-    <title>{{ site.title }}</title>
-    {% seo %}
+    <script src="/assets/js/main.js"></script>
 </head>
 
 <body>
@@ -268,7 +44,6 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <div class="container">
                 <a href="{{site.baseurl}}/index" class="navbar-brand mb-0 h1">
-                <!--  <img src="/assets/leaf.jpg" height=50/> -->
                     <span style="color:#5a9296"><i class="fa fa-clock fa-lg animated jackInTheBox"></i></span>
                     <span class="ml-2">
                       <span style="color:#9FC2BF">Civ</span><span style="color:#5a9296">Slow</span><span style="color:#9FC2BF">Poke</span>
@@ -311,10 +86,7 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
                 </div>
         </nav>
         </div>
-
     </header>
-
-
 
     <div class="container shadow  pt-5 mt-4 ">
 
@@ -328,7 +100,6 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
             <div class="row pt-2 pb-2">
 
                 <div class="col-md-6 text-center mt-3">
-
                     <br />
                 </div>
 
@@ -347,9 +118,5 @@ app.controller('myCtrl', function($scope,$timeout, $filter, $http) {
             </div>
         </footer>
     </div>
-
-
-
 </body>
-
 </html>
