@@ -60,15 +60,15 @@
       };
       $scope.playerStats = playerStats;
       $scope.data = displayData;
-      $scope.setChartData(displayData);
-      $scope.setChartData2(displayData);
+      $scope.setChartDataTurns(displayData);
+      $scope.setChartDataPlayerTurnTime(displayData);
       $scope.lastUpdated = moment().format('dddd, MMMM Do YYYY, h:mm:ss a');
       $scope.loading = false;
     };
 
     const roundToMinutes = s => Math.round(s / 60.0, 0);
 
-    $scope.setChartData = data => {
+    $scope.setChartDataTurns = data => {
       $scope.chartOptions = {
         chart: {
           type: 'lineChart',
@@ -115,10 +115,7 @@
       }
     };
 
-    $scope.setChartData2 = data => {
-      let players;
-      const gameName = $scope.selectedGameName;
-
+    $scope.setChartDataPlayerTurnTime = data => {
       $scope.chartOptions2 = {
         chart: {
           type: 'lineChart',
@@ -154,29 +151,24 @@
       };
 
       if (data) {
-        const chartData = [];
+        const players = $scope
+            .allData
+            .games[$scope.selectedGameName]
+            .players;
 
-        players = $scope.allData.games[gameName].players;
-
-        players.forEach(player => {
-          const items = data
-              .filter(d => d.playerName === player.name)
-              .map(d => [d.turn, d.timeTaken]);
-
-          const avg = ($scope
-              .playerStats
-              .find(s => s.playerName === player.name) || {turnAvg: 0})
-              .turnAvg;
-
-          chartData.push({
+        $scope.chartData2 = players.map(player =>
+          ({
             key: player.name,
-            values: items,
+            values: data
+                .filter(d => d.playerName === player.name)
+                .map(d => [d.turn, d.timeTaken]),
             area: false,
-            mean: avg,
-          });
-        });
+            mean: ($scope
+                .playerStats
+                .find(s => s.playerName === player.name) || {turnAvg: 0})
+                .turnAvg,
+          }));
 
-        $scope.chartData2 = chartData;
         refreshChart($scope.api2);
       }
     };
@@ -202,8 +194,6 @@
           .utc(d)
           .format('HH:mm Do MMMM YYYY');
 
-    $scope.setChartData();
-    $scope.setChartData2();
     $scope.getData();
   });
 }());
