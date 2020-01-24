@@ -25,41 +25,35 @@
 
     $scope.processData = () => {
       const allData = $scope.allData;
-      const playerStats = [];
+      const lastGame = $cookies.get('lastGame');
 
       $scope.gameNames = allData.gameNames;
-      const lastGame = $cookies.get('lastGame');
       $scope.selectedGameName = $scope.selectedGameName ||
         lastGame ||
         $scope.gameNames[$scope.gameNames.length - 1];
 
       const gameData = allData.games[$scope.selectedGameName];
       const turns = gameData.turns;
-      const displayData = [];
 
-      turns.forEach(t => {
-        displayData.push({
-          playerName: t.player,
-          created: t.eventDateTime,
-          turn: t.turn,
-          gameName: gameData.gameName,
-          prettyDate: $scope.getPrettyDate(t.eventDateTime),
-          timeTaken: t.turnTimeSecond === -1 ?
+      const displayData = turns.map(t => ({
+        playerName: t.player,
+        created: t.eventDateTime,
+        turn: t.turn,
+        gameName: gameData.gameName,
+        prettyDate: $scope.getPrettyDate(t.eventDateTime),
+        timeTaken: t.turnTimeSecond === -1 ?
             null :
             Math.round(t.turnTimeSecond / 60, 0),
-        });
-      });
+      }));
 
-      gameData.players.forEach(p => {
-        playerStats.push({
-          playerName: p.name,
-          turnAvg: Math.round(p.averageTurnTimeSeconds / 60.0, 0),
-          turnMin: Math.round(p.minTurnTimeSeconds / 60.0, 0),
-          turnMax: Math.round(p.maxTurnTimeSeconds / 60.0, 0),
-          turnStd: Math.round(p.standardDeviationTurnTime / 60.0, 0),
-          isTurn: p.isTurn,
-        });
-      });
+      const playerStats = gameData.players.map(p => ({
+        playerName: p.name,
+        turnAvg: roundToMinutes(p.averageTurnTimeSeconds),
+        turnMin: roundToMinutes(p.minTurnTimeSeconds),
+        turnMax: roundToMinutes(p.maxTurnTimeSeconds),
+        turnStd: roundToMinutes(p.standardDeviationTurnTime),
+        isTurn: p.isTurn,
+      }));
 
       $scope.gameStats = {
         turnsPerDay: gameData.turnRate,
@@ -72,10 +66,9 @@
       $scope.loading = false;
     };
 
-    $scope.setChartData = data => {
-      let items;
-      const chartData = [];
+    const roundToMinutes = s => Math.round(s / 60.0, 0);
 
+    $scope.setChartData = data => {
       $scope.chartOptions = {
         chart: {
           type: 'lineChart',
@@ -86,17 +79,11 @@
             bottom: 60,
             left: 0,
           },
-          x: d => {
-            return d[0];
-          },
-          y: d => {
-            return d[1];
-          },
-
+          x: d => d[0],
+          y: d => d[1],
           color: d3.scale.category10().range(),
           useInteractiveGuideline: true,
           clipVoronoi: false,
-
           xAxis: {
             axisLabel: 'Turn Time',
             tickFormat: d => {
@@ -106,30 +93,24 @@
             staggerLabels: true,
             axisLabelDistance: 10,
           },
-
           yAxis: {
             axisLabel: 'Turn No.',
-            tickFormat: d => {
-              return d;
-            },
+            tickFormat: d => d,
             axisLabelDistance: 0,
           },
         },
       };
 
-
       if (data) {
-        items = [];
-        data.forEach(d => {
-          items.push([moment.utc(d.created).valueOf(), d.turn]);
-        });
-
-        chartData.push({
+        $scope.chartData = [{
           key: 'Turns',
-          values: items,
+          values: data.map(d =>
+            ([
+              moment.utc(d.created).valueOf(),
+              d.turn,
+            ])),
           area: true,
-        });
-        $scope.chartData = chartData;
+        }];
         $timeout(() => {
           $scope.api.refresh();
         }, 100);
