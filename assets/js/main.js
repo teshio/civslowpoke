@@ -72,10 +72,7 @@
     };
 
     $scope.setChartData = function(data) {
-      let i;
-      let d;
       let items;
-      let item;
       const chartData = [];
 
       $scope.chartOptions = {
@@ -122,11 +119,9 @@
 
       if (data) {
         items = [];
-        for (i = 0; i < data.length; i++) {
-          d = data[i];
-          item = [moment.utc(d.created).valueOf(), d.turn];
-          items.push(item);
-        }
+        data.forEach(function(d) {
+          items.push([moment.utc(d.created).valueOf(), d.turn]);
+        });
 
         chartData.push({
           key: 'Turns',
@@ -136,7 +131,7 @@
         $scope.chartData = chartData;
         $timeout(function() {
           $scope.api.refresh();
-        }, 10);
+        }, 100);
       }
     };
 
