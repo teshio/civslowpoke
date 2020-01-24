@@ -33,9 +33,8 @@
         $scope.gameNames[$scope.gameNames.length - 1];
 
       const gameData = allData.games[$scope.selectedGameName];
-      const turns = gameData.turns;
 
-      const displayData = turns.map(t => ({
+      const displayData = gameData.turns.map(t => ({
         playerName: t.player,
         created: t.eventDateTime,
         turn: t.turn,
@@ -65,8 +64,6 @@
       $scope.lastUpdated = moment().format('dddd, MMMM Do YYYY, h:mm:ss a');
       $scope.loading = false;
     };
-
-    const roundToMinutes = s => Math.round(s / 60.0, 0);
 
     $scope.setChartDataTurns = data => {
       $scope.chartOptions = {
@@ -104,6 +101,7 @@
       if (data) {
         $scope.chartData = [{
           key: 'Turns',
+          // gather array of [datetime, turnNo] pairs
           values: data.map(d =>
             ([
               moment.utc(d.created).valueOf(),
@@ -151,11 +149,13 @@
       };
 
       if (data) {
+        // get all possible players for current game
         const players = $scope
             .allData
             .games[$scope.selectedGameName]
             .players;
 
+        // gather player's turn times
         $scope.chartData2 = players.map(player =>
           ({
             key: player.name,
@@ -172,8 +172,6 @@
         refreshChart($scope.api2);
       }
     };
-
-    const refreshChart = api => $timeout(() => api.refresh(), 100);
 
     $scope.turnClass = stat => stat.isTurn ? 'table-warning' : '';
 
@@ -193,6 +191,10 @@
       moment
           .utc(d)
           .format('HH:mm Do MMMM YYYY');
+
+    // private functions
+    const refreshChart = api => $timeout(() => api.refresh(), 100);
+    const roundToMinutes = s => Math.round(s / 60.0, 0);
 
     $scope.getData();
   });
