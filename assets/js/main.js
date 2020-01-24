@@ -1,3 +1,4 @@
+/* eslint arrow-parens: ["error", "as-needed"]*/
 /* global angular, moment, d3 */
 /* jslint plusplus: true */
 
@@ -7,22 +8,22 @@
     'angular.filter',
     'nvd3',
     'ngCookies',
-  ], function($interpolateProvider) {
+  ], $interpolateProvider => {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
   });
 
-  app.controller('myCtrl', function($scope, $timeout, $http, $cookies) {
+  app.controller('myCtrl', ($scope, $timeout, $http, $cookies) => {
     $scope.loading = true;
 
-    $scope.selectedGameNameChanged = function() {
+    $scope.selectedGameNameChanged = () => {
       $scope.processData();
       $cookies.put('lastGame', $scope.selectedGameName, {
         expires: moment('2025-01-01').toDate(),
       });
     };
 
-    $scope.processData = function() {
+    $scope.processData = () => {
       const allData = $scope.allData;
       const playerStats = [];
 
@@ -36,7 +37,7 @@
       const turns = gameData.turns;
       const displayData = [];
 
-      turns.forEach(function(t) {
+      turns.forEach(t => {
         displayData.push({
           playerName: t.player,
           created: t.eventDateTime,
@@ -49,7 +50,7 @@
         });
       });
 
-      gameData.players.forEach(function(p) {
+      gameData.players.forEach(p => {
         playerStats.push({
           playerName: p.name,
           turnAvg: Math.round(p.averageTurnTimeSeconds / 60.0, 0),
@@ -71,7 +72,7 @@
       $scope.loading = false;
     };
 
-    $scope.setChartData = function(data) {
+    $scope.setChartData = data => {
       let items;
       const chartData = [];
 
@@ -85,10 +86,10 @@
             bottom: 60,
             left: 0,
           },
-          x: function(d) {
+          x: d => {
             return d[0];
           },
-          y: function(d) {
+          y: d => {
             return d[1];
           },
 
@@ -98,7 +99,7 @@
 
           xAxis: {
             axisLabel: 'Turn Time',
-            tickFormat: function(d) {
+            tickFormat: d => {
               return d3.time.format('%d/%m/%y')(new Date(d));
             },
             showMaxMin: true,
@@ -108,7 +109,7 @@
 
           yAxis: {
             axisLabel: 'Turn No.',
-            tickFormat: function(d) {
+            tickFormat: d => {
               return d;
             },
             axisLabelDistance: 0,
@@ -119,7 +120,7 @@
 
       if (data) {
         items = [];
-        data.forEach(function(d) {
+        data.forEach(d => {
           items.push([moment.utc(d.created).valueOf(), d.turn]);
         });
 
@@ -129,13 +130,13 @@
           area: true,
         });
         $scope.chartData = chartData;
-        $timeout(function() {
+        $timeout(() => {
           $scope.api.refresh();
         }, 100);
       }
     };
 
-    $scope.setChartData2 = function(data) {
+    $scope.setChartData2 = data => {
       const chartData = [];
       let item;
       let items;
@@ -152,13 +153,13 @@
             bottom: 60,
             left: 70,
           },
-          x: function(d) {
+          x: d => {
             return d[0];
           },
-          y: function(d) {
+          y: d => {
             return d[1];
           },
-          average: function(d) {
+          average: d => {
             return d.mean;
           },
           color: d3.scale.category10()
@@ -169,7 +170,7 @@
 
           xAxis: {
             axisLabel: 'Turn #',
-            tickFormat: function(d) {
+            tickFormat: d => {
               return d;
             },
             showMaxMin: true,
@@ -179,7 +180,7 @@
 
           yAxis: {
             axisLabel: 'Turn Time (mins)',
-            tickFormat: function(d) {
+            tickFormat: d => {
               return d;
             },
             axisLabelDistance: -10,
@@ -190,10 +191,10 @@
       if (data) {
         players = $scope.allData.games[gameName].players;
 
-        players.forEach(function(player) {
+        players.forEach(player => {
           items = [];
 
-          data.forEach(function(d) {
+          data.forEach(d => {
             if (d.playerName === player.name) {
               item = [d.turn, d.timeTaken];
               items.push(item);
@@ -201,8 +202,7 @@
           });
 
           let avg = 0;
-          $scope.playerStats.forEach(function(playerStat) {
-          // for (k = 0; k < $scope.playerStats.length; k++) {
+          $scope.playerStats.forEach(playerStat => {
             if (playerStat.playerName === player.name) {
               avg = playerStat.turnAvg;
             }
@@ -216,28 +216,28 @@
         });
 
         $scope.chartData2 = chartData;
-        $timeout(function() {
+        $timeout(() => {
           $scope.api2.refresh();
         }, 500);
       }
     };
 
-    $scope.turnClass = function(stat) {
+    $scope.turnClass = stat => {
       return stat.isTurn ? 'table-warning' : '';
     };
 
-    $scope.getData = function() {
+    $scope.getData = () => {
       $scope.data = [];
       $scope.allData = [];
       $scope.loading = true;
       $http.get('https://civslowpoke.azurewebsites.net/api/values/all')
-          .then(function(response) {
+          .then(response => {
             $scope.allData = response.data;
             $scope.processData();
           });
     };
 
-    $scope.getPrettyDate = function(d) {
+    $scope.getPrettyDate = d => {
       const dt = moment.utc(d);
       return dt.format('HH:mm Do MMMM YYYY');
     };
