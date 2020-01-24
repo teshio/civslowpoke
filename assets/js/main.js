@@ -116,7 +116,6 @@
     };
 
     $scope.setChartData2 = data => {
-      let items;
       let players;
       const gameName = $scope.selectedGameName;
 
@@ -160,21 +159,15 @@
         players = $scope.allData.games[gameName].players;
 
         players.forEach(player => {
-          items = [];
+          const items = data
+              .filter(d => d.playerName === player.name)
+              .map(d => [d.turn, d.timeTaken]);
 
-          data.forEach(d => {
-            if (d.playerName === player.name) {
-              const item = [d.turn, d.timeTaken];
-              items.push(item);
-            }
-          });
+          const avg = ($scope
+              .playerStats
+              .find(s => s.playerName === player.name) || {turnAvg: 0})
+              .turnAvg;
 
-          let avg = 0;
-          $scope.playerStats.forEach(playerStat => {
-            if (playerStat.playerName === player.name) {
-              avg = playerStat.turnAvg;
-            }
-          });
           chartData.push({
             key: player.name,
             values: items,
