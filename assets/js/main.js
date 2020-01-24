@@ -77,7 +77,7 @@
             top: 20,
             right: 0,
             bottom: 60,
-            left: 0,
+            left: 70,
           },
           x: d => d[0],
           y: d => d[1],
@@ -96,7 +96,7 @@
           yAxis: {
             axisLabel: 'Turn No.',
             tickFormat: d => d,
-            axisLabelDistance: 0,
+            axisLabelDistance: -10,
           },
         },
       };
@@ -111,15 +111,11 @@
             ])),
           area: true,
         }];
-        $timeout(() => {
-          $scope.api.refresh();
-        }, 100);
+        refreshChart($scope.api);
       }
     };
 
     $scope.setChartData2 = data => {
-      const chartData = [];
-      let item;
       let items;
       let players;
       const gameName = $scope.selectedGameName;
@@ -134,42 +130,33 @@
             bottom: 60,
             left: 70,
           },
-          x: d => {
-            return d[0];
-          },
-          y: d => {
-            return d[1];
-          },
-          average: d => {
-            return d.mean;
-          },
-          color: d3.scale.category10()
+          x: d => d[0],
+          y: d => d[1],
+          average: d => d.mean,
+          color: d3.scale
+              .category10()
               .range(),
           duration: 300,
           useInteractiveGuideline: true,
           clipVoronoi: true,
-
           xAxis: {
             axisLabel: 'Turn #',
-            tickFormat: d => {
-              return d;
-            },
+            tickFormat: d => d,
             showMaxMin: true,
             staggerLabels: false,
             axisLabelDistance: 10,
           },
-
           yAxis: {
             axisLabel: 'Turn Time (mins)',
-            tickFormat: d => {
-              return d;
-            },
+            tickFormat: d => d,
             axisLabelDistance: -10,
           },
         },
       };
 
       if (data) {
+        const chartData = [];
+
         players = $scope.allData.games[gameName].players;
 
         players.forEach(player => {
@@ -177,7 +164,7 @@
 
           data.forEach(d => {
             if (d.playerName === player.name) {
-              item = [d.turn, d.timeTaken];
+              const item = [d.turn, d.timeTaken];
               items.push(item);
             }
           });
@@ -197,31 +184,30 @@
         });
 
         $scope.chartData2 = chartData;
-        $timeout(() => {
-          $scope.api2.refresh();
-        }, 500);
+        refreshChart($scope.api2);
       }
     };
 
-    $scope.turnClass = stat => {
-      return stat.isTurn ? 'table-warning' : '';
-    };
+    const refreshChart = api => $timeout(() => api.refresh(), 100);
+
+    $scope.turnClass = stat => stat.isTurn ? 'table-warning' : '';
 
     $scope.getData = () => {
+      $scope.loading = true;
       $scope.data = [];
       $scope.allData = [];
-      $scope.loading = true;
-      $http.get('https://civslowpoke.azurewebsites.net/api/values/all')
+      $http
+          .get('https://civslowpoke.azurewebsites.net/api/values/all')
           .then(response => {
             $scope.allData = response.data;
             $scope.processData();
           });
     };
 
-    $scope.getPrettyDate = d => {
-      const dt = moment.utc(d);
-      return dt.format('HH:mm Do MMMM YYYY');
-    };
+    $scope.getPrettyDate = d =>
+      moment
+          .utc(d)
+          .format('HH:mm Do MMMM YYYY');
 
     $scope.setChartData();
     $scope.setChartData2();
