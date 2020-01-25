@@ -67,9 +67,78 @@
       $scope.setChartDataTurns(displayData);
       $scope.setChartDataPlayerTurnTime(displayData);
       $scope.setChartDataActivity(displayData);
+      $scope.setChartActivityTrend(displayData);
       $scope.lastUpdated = moment().format('dddd, MMMM Do YYYY, h:mm:ss a');
       $scope.loading = false;
     };
+
+
+    $scope.setChartActivityTrend = data => {
+      $scope.chartOptions4 = {
+        chart: {
+          type: 'discreteBarChart',
+          height: 450,
+          margin: {
+            top: 20,
+            right: 0,
+            bottom: 60,
+            left: 70,
+          },
+          x: d => d[0],
+          y: d => d[1],
+          // color: d3.scale.category10().range(),
+          xAxis: {
+            axisLabel: 'Time of Day',
+            tickFormat: d => d3.time.format('%H:%M')(new Date(d)),
+            showMaxMin: true,
+            staggerLabels: false,
+            axisLabelDistance: 10,
+            rotateLabels: -90,
+          },
+          yAxis: {
+            axisLabel: 'Total Turns',
+            tickFormat: d => d,
+            axisLabelDistance: -10,
+          },
+        },
+      };
+
+      if (data) {
+        const dataByGrouping = data.map(d => ({
+          key: moment
+              .utc(d.created)
+              .startOf('hour')
+              .format('HH:mm'),
+          value: 1,
+        }));
+
+        const s = groupBy(dataByGrouping, 'key');
+
+        let dataToShow = [];
+        /*
+        for (const key in s) {
+          if (s.hasOwnProperty(key)) {
+            dataToShow.push([moment.duration(key).valueOf(), s[key].length]);
+          }
+        }*/
+        dataToShow = [...Array(24).keys()].map(d => {
+          const time = moment(d, 'HH').format('HH:mm');
+          const turns = s[time] || {length: 0};
+          return [moment(time, 'HH:mm').valueOf(), turns.length];
+        });
+
+        console.log(s);
+        console.log(dataToShow);
+
+        $scope.chartData4 = [{
+          key: 'Turns',
+          values: dataToShow,
+          area: true,
+        }];
+        refreshChart($scope.api4);
+      }
+    };
+
 
     $scope.setChartDataActivity = data => {
       $scope.chartOptions3 ={
@@ -159,15 +228,6 @@
               .format('YYYY-MM-DDTHH:mm'),
           value: 1,
         }));
-
-
-        const groupBy = function(xs, key) {
-          return xs.reduce(function(rv, x) {
-            (rv[x[key]] = rv[x[key]] || []).push(x);
-            return rv;
-          }, {});
-        };
-
         const s = groupBy(dataByGrouping, 'key');
 
         const dataToShow = [];
@@ -176,7 +236,6 @@
             dataToShow.push([moment.utc(key).valueOf(), s[key].length]);
           }
         }
-        console.log(dataToShow);
 
         $scope.chartData3 = [{
           key: 'Turns',
@@ -318,6 +377,12 @@
     // private functions
     const refreshChart = api => $timeout(() => api.refresh(), 100);
     const roundToMinutes = s => Math.round(s / 60.0, 0);
+    const groupBy = function(xs, key) {
+      return xs.reduce(function(rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+      }, {});
+    };
 
     $scope.getData();
   });

@@ -76,6 +76,9 @@ layout: default
       <nvd3 options="chartOptions3" data="chartData3" api="api3"></nvd3>
   </div>
 
+    <h5>Activity Trend by Hour</h5>
+    <nvd3 options="chartOptions4" data="chartData4" api="api4"></nvd3>
+
     <h5>Player Performance Chart</h5>
     <nvd3 options="chartOptions2" data="chartData2" api="api2"></nvd3>
 
