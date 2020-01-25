@@ -15,12 +15,17 @@
 
   app.controller('myCtrl', ($scope, $timeout, $http, $cookies) => {
     $scope.loading = true;
+    $scope.activityBy = 'day';
 
     $scope.selectedGameNameChanged = () => {
       $scope.processData();
       $cookies.put('lastGame', $scope.selectedGameName, {
         expires: moment('2025-01-01').toDate(),
       });
+    };
+
+    $scope.activityByChanged = () => {
+      $scope.processData();
     };
 
     $scope.processData = () => {
@@ -91,7 +96,19 @@
           xAxis: {
             axisLabel: 'Date/Time',
             tickFormat: function(d) {
-              return d3.time.format('%d/%m/%y %H:%M')(new Date(d));
+              let format = '%d/%m/%y %H:%M';
+              switch ($scope.activityBy) {
+                case 'day':
+                  format = '%a %d/%m/%y';
+                  break;
+                case 'month':
+                  format = '%b %y';
+                  break;
+                case 'year':
+                  format = '%Y';
+                  break;
+              }
+              return d3.time.format(format)(new Date(d));
             },
             rotateLabels: 30,
             showMaxMin: false,
@@ -104,7 +121,22 @@
             },
           },
           tooltip: {
-            keyFormatter: d=>d3.time.format('%-d/%-m/%Y %H:%M')(new Date(d)),
+            keyFormatter: d=> {
+              let format = '%d/%m/%y %H:%M';
+              switch ($scope.activityBy) {
+                case 'day':
+                  format = '%a %d/%m/%y';
+                  break;
+                case 'month':
+                  format = '%b %y';
+                  break;
+                case 'year':
+                  format = '%Y';
+                  break;
+              }
+
+              return d3.time.format(format)(new Date(d));
+            },
             valueFormatter: d => (d + ' turn' + (d === 1 ? '' : 's')),
           },
           zoom: {
@@ -120,8 +152,9 @@
       };
 
       if (data) {
+        const groupByAmount = $scope.activityBy;
         const dataByGrouping = data.map(d => ({
-          key: moment.utc(d.created).startOf('hour'),
+          key: moment.utc(d.created).startOf(groupByAmount),
           value: 1,
         }));
 

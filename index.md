@@ -60,7 +60,20 @@ layout: default
     <nvd3 options="chartOptions" data="chartData" api="api"></nvd3>
 
     <h5>Activity Chart</h5>
-    
+
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <select class="form-control" ng-model="activityBy" ng-change="activityByChanged()">
+            <option value="hour">By Hour</option>
+            <option value="day">By Day</option>
+            <option value="month">By Month</option>
+            <option value="year">By Year</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <nvd3 options="chartOptions3" data="chartData3" api="api3"></nvd3>
 
 
