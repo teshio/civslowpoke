@@ -61,8 +61,94 @@
       $scope.data = displayData;
       $scope.setChartDataTurns(displayData);
       $scope.setChartDataPlayerTurnTime(displayData);
+      $scope.setChartDataActivity(displayData);
       $scope.lastUpdated = moment().format('dddd, MMMM Do YYYY, h:mm:ss a');
       $scope.loading = false;
+    };
+
+    $scope.setChartDataActivity = data => {
+      $scope.chartOptions3 ={
+        chart: {
+          type: 'historicalBarChart',
+          height: 450,
+          margin: {
+            top: 20,
+            right: 0,
+            bottom: 110,
+            left: 70,
+          },
+          x: function(d) {
+            return d[0];
+          },
+          y: function(d) {
+            return d[1];
+          },
+          showValues: true,
+          valueFormat: function(d) {
+            return d3.format('1f')(d);
+          },
+          duration: 100,
+          xAxis: {
+            axisLabel: 'Date/Time',
+            tickFormat: function(d) {
+              return d3.time.format('%d/%m/%y %H:%M')(new Date(d));
+            },
+            rotateLabels: 30,
+            showMaxMin: false,
+          },
+          yAxis: {
+            axisLabel: 'Turns taken across all players',
+            axisLabelDistance: -10,
+            tickFormat: function(d) {
+              return d3.format(',1f')(d);
+            },
+          },
+          tooltip: {
+            keyFormatter: d=>d3.time.format('%-d/%-m/%Y %H:%M')(new Date(d)),
+            valueFormatter: d => (d + ' turn' + (d === 1 ? '' : 's')),
+          },
+          zoom: {
+            enabled: true,
+            scaleExtent: [1, 10],
+            useFixedDomain: false,
+            useNiceScale: false,
+            horizontalOff: false,
+            verticalOff: true,
+            unzoomEventType: 'dblclick.zoom',
+          },
+        },
+      };
+
+      if (data) {
+        const dataByGrouping = data.map(d => ({
+          key: moment.utc(d.created).startOf('hour'),
+          value: 1,
+        }));
+
+        const groupBy = function(xs, key) {
+          return xs.reduce(function(rv, x) {
+            (rv[x[key]] = rv[x[key]] || []).push(x);
+            return rv;
+          }, {});
+        };
+
+        const s = groupBy(dataByGrouping, 'key');
+
+        const dataToShow = [];
+        for (const key in s) {
+          if (s.hasOwnProperty(key)) {
+            dataToShow.push([moment.utc(key).valueOf(), s[key].length]);
+          }
+        }
+
+        $scope.chartData3 = [{
+          key: 'Turns',
+          values: dataToShow,
+          area: true,
+        }];
+      }
+
+      refreshChart($scope.api3);
     };
 
     $scope.setChartDataTurns = data => {

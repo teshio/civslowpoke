@@ -59,6 +59,11 @@ layout: default
 
     <nvd3 options="chartOptions" data="chartData" api="api"></nvd3>
 
+    <h5>Activity Chart</h5>
+    
+    <nvd3 options="chartOptions3" data="chartData3" api="api3"></nvd3>
+
+
     <h5>Player Performance Chart</h5>
     <nvd3 options="chartOptions2" data="chartData2" api="api2"></nvd3>
 
