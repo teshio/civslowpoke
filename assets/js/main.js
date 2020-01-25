@@ -76,24 +76,27 @@
     $scope.setChartActivityTrend = data => {
       $scope.chartOptions4 = {
         chart: {
-          type: 'discreteBarChart',
+          type: 'multiBarChart',
           height: 450,
           margin: {
-            top: 20,
+            top: 50,
             right: 0,
             bottom: 60,
             left: 70,
           },
           x: d => d[0],
           y: d => d[1],
+          showLegend: true,
           // color: d3.scale.category10().range(),
+          stacked: true,
           xAxis: {
             axisLabel: 'Time of Day',
             tickFormat: d => d3.time.format('%H:%M')(new Date(d)),
-            showMaxMin: true,
+            showMaxMin: false,
             staggerLabels: false,
-            axisLabelDistance: 10,
-            rotateLabels: -90,
+            stacked: false,
+            // axisLabelDistance: 10,
+            rotateLabels: 0,
           },
           yAxis: {
             axisLabel: 'Total Turns',
@@ -104,41 +107,58 @@
       };
 
       if (data) {
-        const dataByGrouping = data.map(d => ({
-          key: moment
-              .utc(d.created)
-              .startOf('hour')
-              .format('HH:mm'),
-          value: 1,
-        }));
-
-        const s = groupBy(dataByGrouping, 'key');
-
-        let dataToShow = [];
-        /*
-        for (const key in s) {
-          if (s.hasOwnProperty(key)) {
-            dataToShow.push([moment.duration(key).valueOf(), s[key].length]);
-          }
-        }*/
-        dataToShow = [...Array(24).keys()].map(d => {
-          const time = moment(d, 'HH').format('HH:mm');
-          const turns = s[time] || {length: 0};
-          return [moment(time, 'HH:mm').valueOf(), turns.length];
-        });
-
-        console.log(s);
-        console.log(dataToShow);
-
-        $scope.chartData4 = [{
-          key: 'Turns',
-          values: dataToShow,
-          area: true,
-        }];
+        $scope.chartData4 = [/*
+          {
+            key: 'All',
+            values: getActivityByHour(data, 'all'),
+          },*/
+          {
+            key: 'Weekends',
+            values: getActivityByHour(data, 'weekend'),
+          },
+          {
+            key: 'Weekdays',
+            values: getActivityByHour(data, 'weekday'),
+          }];
+        console.log($scope.chartData4);
         refreshChart($scope.api4);
       }
     };
 
+    const getActivityByHour = (data, filterBy) => {
+      const dataByGrouping = data
+          .filter(d => {
+            const mmt = moment .utc(d.created);
+            switch (filterBy) {
+              case 'all':
+                return true;
+              case 'weekend':
+                return mmt.day() > 5;
+                break;
+              case 'weekday':
+                return mmt.day() < 6;
+                break;
+            }
+            return false;
+          })
+          .map(d => ({
+            key: moment
+                .utc(d.created)
+                .startOf('hour')
+                .format('HH:mm'),
+            value: 1,
+          }));
+
+      const s = groupBy(dataByGrouping, 'key');
+
+      const dataToShow = [...Array(24).keys()].map(d => {
+        const time = moment(d, 'HH').format('HH:mm');
+        const turns = s[time] || {length: 0};
+        return [moment(time, 'HH:mm').valueOf(), turns.length];
+      });
+
+      return dataToShow;
+    };
 
     $scope.setChartDataActivity = data => {
       $scope.chartOptions3 ={
