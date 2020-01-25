@@ -140,10 +140,9 @@
             valueFormatter: d => (d + ' turn' + (d === 1 ? '' : 's')),
           },
           zoom: {
-            enabled: false,
-            scaleExtent: [1, 10],
+            enabled: true,
             useFixedDomain: false,
-            useNiceScale: false,
+            useNiceScale: true,
             horizontalOff: false,
             verticalOff: true,
             unzoomEventType: 'dblclick.zoom',
@@ -154,9 +153,13 @@
       if (data) {
         const groupByAmount = $scope.activityBy;
         const dataByGrouping = data.map(d => ({
-          key: moment.utc(d.created).startOf(groupByAmount),
+          key: moment
+              .utc(d.created)
+              .startOf(groupByAmount)
+              .format('YYYY-MM-DDTHH:mm'),
           value: 1,
         }));
+
 
         const groupBy = function(xs, key) {
           return xs.reduce(function(rv, x) {
@@ -173,6 +176,7 @@
             dataToShow.push([moment.utc(key).valueOf(), s[key].length]);
           }
         }
+        console.log(dataToShow);
 
         $scope.chartData3 = [{
           key: 'Turns',
