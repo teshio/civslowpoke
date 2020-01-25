@@ -82,7 +82,7 @@
             top: 50,
             right: 0,
             bottom: 60,
-            left: 70,
+            left: 30,
           },
           x: d => d[0],
           y: d => d[1],
@@ -101,7 +101,7 @@
           yAxis: {
             axisLabel: 'Total Turns',
             tickFormat: d => d,
-            axisLabelDistance: -10,
+            axisLabelDistance: -30,
           },
         },
       };
@@ -169,7 +169,7 @@
             top: 20,
             right: 0,
             bottom: 110,
-            left: 70,
+            left: 30,
           },
           x: function(d) {
             return d[0];
@@ -204,7 +204,7 @@
           },
           yAxis: {
             axisLabel: 'Turns taken across all players',
-            axisLabelDistance: -10,
+            axisLabelDistance: -30,
             tickFormat: function(d) {
               return d3.format(',1f')(d);
             },
@@ -276,7 +276,7 @@
             top: 20,
             right: 0,
             bottom: 60,
-            left: 70,
+            left: 30,
           },
           x: d => d[0],
           y: d => d[1],
@@ -295,7 +295,7 @@
           yAxis: {
             axisLabel: 'Turn No.',
             tickFormat: d => d,
-            axisLabelDistance: -10,
+            axisLabelDistance: -30,
           },
         },
       };
@@ -324,7 +324,7 @@
             top: 20,
             right: 20,
             bottom: 60,
-            left: 70,
+            left: 30,
           },
           x: d => d[0],
           y: d => d[1],
@@ -343,9 +343,9 @@
             axisLabelDistance: 10,
           },
           yAxis: {
-            axisLabel: 'Turn Time (mins)',
-            tickFormat: d => d,
-            axisLabelDistance: -10,
+            axisLabel: 'Turn Time (hours)',
+            tickFormat: d => d3.format('1f')(d/60.0),
+            axisLabelDistance: -30,
           },
         },
       };
