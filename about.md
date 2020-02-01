@@ -4,4 +4,4 @@ title: About
 permalink: /about/
 ---
 
-... hmmm... 
+Track the progress of your Civilization 6 Play By Cloud game here!

@@ -19,13 +19,14 @@ $headings-color:              $primary;
 @import 'bootstrap';
 @import 'timeline';
 
-
-html {
-  background: url(/assets/back.jpg) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+@media (min-width: 500px) {
+  html {
+    background: url(/assets/back.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
 }
 
 nav .container {
