@@ -125,7 +125,6 @@
             key: 'Weekdays',
             values: getActivityByHour(data, 'weekday'),
           }];
-        console.log($scope.chartData4);
         refreshChart($scope.api4);
       }
     };
