@@ -15,6 +15,35 @@ layout: default
       </div>
     </div>
 
+    <h5>Your Turn Now!</h5>
+    <div class="row mb-3">
+      <div class="col-12">
+        <div class="card">
+          <ul class="list-group list-group-flush">
+            <li
+              class="list-group-item"
+              ng-show="value.length > 0"
+              ng-repeat="(key, value) in allData.playerCurrentTurns">
+              <div class="row">
+                <div class="col-auto">[[key]]</div>
+                <div class="col">
+                  <span class="mr-2 badge" ng-class="{
+                      'badge-primary': selectedGameName !== g ,
+                      'badge-warning': selectedGameName === g
+                    }" ng-repeat="g in value">
+                    [[g]]
+                  </span>
+
+                </div>
+              </div>
+
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
     <div class="row">
       <div class="col-12">
         <div class="form-group">
