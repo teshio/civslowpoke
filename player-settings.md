@@ -17,13 +17,14 @@ layout: default
             [[p.name]]
       </div>
       <div class="card-body">
-        <h6 class="card-title">Exclusion Hours</h6>
+        <h6 class="card-title">
+          Exclusion Hours - hours used: [[getUsedHours(p)]] / remaining: [[getAvailableHours(p)]]</h6>
         <p class="card-text">
           <table class="table table-striped table-sm table-responsive">
             <thead>
               <tr>
                 <th>Time (24h) </th>
-                <th ng-repeat="n in [] | range:24">
+                <th ng-repeat="n in [] | range:24" class="text-center">
                   [[n]]
                 </th>
               </tr>
@@ -33,13 +34,27 @@ layout: default
                 <td>
                 [[e.day]]
                 </td>
-                <td ng-repeat="n in [] | range:24">
+                <td ng-repeat="n in [] | range:24" class="text-center">
                   <div class="form-check">
                     <input class="form-check-input"
                       type="checkbox"
                       ng-model="e.hours[n]"
                       title="[[e.day]] [[n]]" />
                   </div>
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td ng-repeat="n in [] | range:24" class="text-center">
+                  <button class="btn mb-1 btn-secondary btn-sm" ng-click="allSwitch(p, n)">
+                    <i class="fas fa-sync-alt text-white"></i>
+                  </button><br>
+                  <button class="btn mb-1 btn-secondary btn-sm" ng-click="allSwitch(p, n, true)">
+                    <i class="fas fa-check text-white"></i>
+                  </button><br>
+                  <button class="btn mb-1 btn-secondary btn-sm btn-block" ng-click="allSwitch(p, n, false)">
+                    <i class="fas fa-times text-white"></i>
+                  </button>
                 </td>
               </tr>
             </tbody>

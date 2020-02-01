@@ -9,6 +9,29 @@
   app.controller('playerController', ($scope, $timeout, $http, $cookies) => {
     $scope.players =[];
 
+    const hoursAllocations = 100;
+    $scope.getAvailableHours = p => hoursAllocations - $scope.getUsedHours(p);
+
+    $scope.getUsedHours = p => {
+      let sum = 0;
+      p.exclusions.forEach(day => {
+        sum += day.hours.filter(h => h).length;
+      });
+
+      return sum;
+    };
+
+    $scope.allSwitch = (player, n, mode = 'switch') => {
+      player.exclusions.forEach(e => {
+        const target = mode === 'switch' ? !e.hours[n] : mode;
+        e.hours.forEach((h, index) => {
+          if (index == n) {
+            e.hours[index] = target;
+          }
+        });
+      });
+    };
+
     $scope.getPlayers = () =>{
       $scope.players =[];
 
@@ -18,6 +41,11 @@
     };
 
     $scope.update = p =>{
+      if ($scope.getAvailableHours(p) < 0) {
+        alert('allocated too many hours');
+        return;
+      }
+
       p.inProgress = true;
       console.log(JSON.stringify(p));
       $http.post('https://civslowpoke.azurewebsites.net/api/values/player', [p]).then(() => {
