@@ -25,14 +25,20 @@ layout: default
               ng-show="value.length > 0"
               ng-repeat="(key, value) in allData.playerCurrentTurns">
               <div class="row">
-                <div class="col-auto">[[key]]</div>
+                <div class="col-auto pulsate text-danger">
+                  <i class="fas fa-cog fa-spin" ></i> [[key]]
+                </div>
                 <div class="col">
-                  <span class="mr-2 badge" ng-class="{
-                      'badge-primary': selectedGameName !== g ,
-                      'badge-warning': selectedGameName === g
-                    }" ng-repeat="g in value">
+                  <button
+                    ng-click="gameBadgeClicked(g)"
+                    class="mr-1 mb-1 btn btn-sm"
+                    ng-repeat="g in value"
+                    ng-class="{
+                        'btn-primary': selectedGameName !== g ,
+                        'btn-warning': selectedGameName === g
+                      }" >
                     [[g]]
-                  </span>
+                  </button>
 
                 </div>
               </div>

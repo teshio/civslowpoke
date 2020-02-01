@@ -17,6 +17,11 @@
     $scope.loading = true;
     $scope.activityBy = 'day';
 
+    $scope.gameBadgeClicked = g => {
+      $scope.selectedGameName = g;
+      $scope.selectedGameNameChanged();
+    };
+
     $scope.selectedGameNameChanged = () => {
       $scope.processData();
       $cookies.put('lastGame', $scope.selectedGameName, {
