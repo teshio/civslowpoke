@@ -36,6 +36,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-nvd3/1.0.9/angular-nvd3.min.js"></script>
     <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/player.js"></script>
 
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
@@ -74,33 +75,8 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto">
-
-                      {%- for path in page_paths -%}
-                      {%- assign my_page = site.pages | where: "path", path | first -%}
-                      {%- if my_page.title == "Treatments" -%}
-                        <li class="nav-item dropdown {% if page.url contains '/treatments/'  %}active{% endif %}">
-                            <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="{{my_page.icon}}"></i>&nbsp;&nbsp; {{ my_page.title | escape }}
-                            </a>
-
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                                {% assign orderedTreatments = site.treatments | sort:"order"%}
-                                {% for t in orderedTreatments %}
-                                <a class="dropdown-item {% if page.url == t.url %}active{% endif %}" href="{{t.url}}">
-                                 <span class="badge badge-dark text-right">{{ t.titletag }}</span>  {{t.title}}
-                                </a>
-                                {% endfor %}
-                            </div>
-                          </li>
-                          {%- else -%}
-
-                        <li class="nav-item {% if page.url == my_page.url %}active{% endif %}">
-                            <a href="{{ my_page.url | relative_url }}" class="nav-link">
-                                <i class="{{my_page.icon}}"></i>&nbsp;&nbsp;{{ my_page.title | escape }}
-                            </a>
-                        </li> {%- endif -%} {%- endfor -%}
-
+                        <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
+                        <li class="nav-item"><a href="/player-settings" class="nav-link">Player Settings</a></li>
                     </ul>
                 </div>
         </nav>
