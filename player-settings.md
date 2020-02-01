@@ -7,7 +7,7 @@ layout: default
 
 
 <h5>Player Settings</h5>
-
+<p>Coming Soon!</p>
 <div class="row">
 
   <div class="col-12 mb-3" ng-repeat="p in players">
