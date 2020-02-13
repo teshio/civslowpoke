@@ -54,7 +54,12 @@ layout: default
       <div class="col-12">
         <div class="form-group">
           <select class="form-control" ng-model="selectedGameName" ng-change="selectedGameNameChanged()">
-            <option ng-repeat="n in gameNames">[[n]]</option>
+            <optgroup label="Current Games">
+              <option ng-repeat="n in games" ng-show="!n.completed">[[n.gameName]]</option>
+            </optgroup>
+            <optgroup label="Finished Games">
+              <option ng-repeat="n in games" ng-show="n.completed">[[n.gameName]]</option>
+            </optgroup>
           </select>
         </div>
       </div>

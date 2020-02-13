@@ -37,10 +37,10 @@
       const allData = $scope.allData;
       const lastGame = $cookies.get('lastGame');
 
-      $scope.gameNames = allData.gameNames;
+      $scope.games = allData.games;
       $scope.selectedGameName = $scope.selectedGameName ||
         lastGame ||
-        $scope.gameNames[$scope.gameNames.length - 1];
+        Object.keys($scope.games)[Object.keys($scope.games).length-1];
 
       const gameData = allData.games[$scope.selectedGameName];
 
