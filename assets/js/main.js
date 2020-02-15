@@ -29,6 +29,8 @@
       });
     };
 
+    $scope.getJetTimeMin = x => 5 + (x.turn * 0.05);
+
     $scope.activityByChanged = () => {
       $scope.processData();
     };
@@ -396,7 +398,7 @@
     $scope.getPrettyDate = d =>
       moment
           .utc(d)
-          .format('HH:mm Do MMMM YYYY');
+          .format('HH:mm DD/MM/YY');
 
     // private functions
     const refreshChart = api => $timeout(() => api.refresh(), 100);

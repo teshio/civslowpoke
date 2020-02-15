@@ -25,10 +25,10 @@ layout: default
               ng-show="value.length > 0"
               ng-repeat="(key, value) in allData.playerCurrentTurns">
               <div class="row">
-                <div class="col-auto pulsate text-danger">
+                <div class="col-12 mb-1 pulsate text-danger">
                   <i class="fas fa-cog fa-spin" ></i> [[key]]
                 </div>
-                <div class="col">
+                <div class="col text-right">
                   <button
                     ng-click="gameBadgeClicked(g)"
                     class="mr-1 mb-1 btn btn-sm"
@@ -127,9 +127,10 @@ layout: default
     <h5>Turn History - [[selectedGameName]]</h5>
 
     <div class="table-responsive">
-      <table class="table table-striped">
+      <table class="table table-striped table-sm">
         <thead>
           <tr>
+            <th></th>
             <th>Player</th>
             <th>Turn #</th>
             <th>Turn Available At</th>
@@ -138,16 +139,22 @@ layout: default
         </thead>
         <tr class="panel" ng-repeat="x in data | orderBy: '-created' ">
             <td>
-              [[x.playerName]]
-              &nbsp;&nbsp;
-              <span ng-show="x.timeTaken < 5 && x.timeTaken > 0"><i class="fas fa-fighter-jet fa-lg"></i></span>
-              <span ng-show="x.timeTaken > 1000"><i class="fas fa-blind fa-lg"></i></span>
+              <span ng-show="x.timeTaken < getJetTimeMin(x) && x.timeTaken > 0">
+                <i class="fas fa-fighter-jet d-inline d-sm-none"></i>
+                <i class="fas fa-fighter-jet fa-lg d-none d-sm-inline"></i>
+              </span>
+              <span ng-show="x.timeTaken > 1000">
+                <i class="fas fa-blind fa-lg"></i>
+              </span>
             </td>
-            <td>[[x.turn]]</td>
-            <td>[[x.prettyDate]]</td>
+            <td><small>[[x.playerName]]</small></td>
+            <td><small>[[x.turn]]</small></td>
+            <td><small>[[x.prettyDate]]</small></td>
             <td ng-class="{'pulsate': $first, 'text-danger': $first }" >
-            [[x.timeTaken]]
-            <i class="fas fa-cog fa-spin" ng-show="$first"></i>
+              <small>
+              [[x.timeTaken]]
+              <i class="fas fa-cog fa-spin" ng-show="$first"></i>
+              </small>
             </td>
         </tr>
       </table>
