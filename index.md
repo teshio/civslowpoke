@@ -49,7 +49,29 @@ layout: default
       </div>
     </div>
 
+    <h5>All Game Stats</h5>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Turns Taken</th>
+          </tr>
+        </thead>
+        <tr ng-repeat="(k,v) in allData.allGameStats.playerTotalTurnsTaken">
+          <td>[[k]]</td>
+          <td>[[v]]</td>
+        </tr>
+        <tfoot>
+          <tr class="font-weight-bold">
+            <td class="text-right">Total</td>
+            <td>[[allData.allGameStats.totalTurnsTaken]]</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
 
+    <h5>Game Stats - [[selectedGameName]]</h5>
     <div class="row">
       <div class="col-12">
         <div class="form-group">
@@ -65,7 +87,7 @@ layout: default
       </div>
     </div>
 
-    <h5>Player Turn Stats (mins)</h5>
+    <h6>Player Turn Stats (mins)</h6>
 
     <div class="table-responsive ">
       <table class="table table-striped">
@@ -91,7 +113,7 @@ layout: default
         </tr>
       </table>
     </div>
-    <h5>Run Chart</h5>
+    <h6>Run Chart</h6>
     <p>
     <i class="fas fa-lg fa-tachometer-alt animated tada" title="game speed"></i>
      <strong>[[gameStats.turnsPerDay | number: 2]] turns/day</strong>
@@ -100,7 +122,7 @@ layout: default
     <nvd3 options="chartOptions" data="chartData" api="api"></nvd3>
 
   <div class="d-none d-lg-block">
-      <h5>Activity Chart</h5>
+      <h6>Activity Chart</h6>
       <div class="row">
         <div class="col-12">
           <div class="form-group">
@@ -116,15 +138,15 @@ layout: default
       <nvd3 options="chartOptions3" data="chartData3" api="api3"></nvd3>
   </div>
 
-    <h5>Activity Trend by Hour</h5>
+    <h6>Activity Trend by Hour</h6>
     <nvd3 options="chartOptions4" data="chartData4" api="api4"></nvd3>
 
-    <h5>Player Performance Chart</h5>
+    <h6>Player Performance Chart</h6>
     <nvd3 options="chartOptions2" data="chartData2" api="api2"></nvd3>
 
 
 
-    <h5>Turn History - [[selectedGameName]]</h5>
+    <h6>Turn History - [[selectedGameName]]</h6>
 
     <div class="table-responsive">
       <table class="table table-striped table-sm">
@@ -160,6 +182,10 @@ layout: default
       </table>
     </div>
 
-    <p class="text-muted text-right"><small>last updated: [[lastUpdated]]</small></p>
+    <p class="text-muted text-right">
+      <small>last updated: [[lastUpdated]]</small><br>
+      <small>data fetch time: [[allData.allGameStats.dataFetchTimeMs]]ms</small><br>
+      <small>data processing time: [[allData.allGameStats.dataProcessingTimeMs]]ms</small>
+    </p>
   </div>
 </div>
